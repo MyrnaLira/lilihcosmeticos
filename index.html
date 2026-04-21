@@ -1,88 +1,119 @@
-HTML
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulário de Pedidos - Cosméticos</title>
+    <title>Pedido de Cosméticos</title>
     <style>
-        body { font-family: sans-serif; background-color: #f4f4f9; padding: 20px; color: #333; }
-        .container { max-width: 600px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin: auto; }
-        h2 { color: #d81b60; text-align: center; }
-        .catalogos { display: grid; grid-template-columns: 1-fr 1-fr; gap: 10px; margin-bottom: 20px; text-align: center; }
-        .btn-cat { padding: 10px; background: #eee; border: 1px solid #ddd; text-decoration: none; color: #333; border-radius: 5px; font-size: 14px; }
-        .btn-cat:hover { background: #d81b60; color: white; }
-        label { display: block; margin-top: 10px; font-weight: bold; }
-        input, textarea { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; background-color: #25d366; color: white; border: none; border-radius: 5px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; }
-        button:hover { background-color: #128c7e; }
-        .brand-section { border-left: 4px solid #d81b60; padding-left: 10px; margin: 20px 0; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fce4ec; padding: 20px; color: #333; }
+        .container { max-width: 800px; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin: auto; }
+        h2 { color: #c2185b; text-align: center; margin-bottom: 25px; }
+        
+        /* Estilo dos Botões de Catálogo */
+        .catalogos { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 20px; }
+        .btn-cat { padding: 12px; background: #f8bbd0; border: 2px solid #f06292; color: #c2185b; cursor: pointer; border-radius: 8px; font-weight: bold; transition: 0.3s; text-align: center; }
+        .btn-cat:hover { background: #f06292; color: white; }
+
+        /* Container do PDF */
+        #visualizador-pdf { width: 100%; height: 500px; border: 2px solid #ddd; border-radius: 8px; margin-bottom: 25px; display: none; }
+        
+        label { display: block; margin-top: 15px; font-weight: bold; color: #880e4f; }
+        input, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #f48fb1; border-radius: 8px; box-sizing: border-box; background: #fffcfd; }
+        
+        .grid-campos { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
+        button#enviar { width: 100%; padding: 18px; background-color: #25d366; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 30px; transition: 0.3s; }
+        button#enviar:hover { background-color: #128c7e; transform: scale(1.02); }
+        
+        .brand-section { border-left: 5px solid #c2185b; padding-left: 15px; background: #fff8fa; padding: 10px; margin: 20px 0; border-radius: 0 8px 8px 0; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>🛍️ Meu Pedido de Beleza</h2>
-    <p style="text-align: center;">Consulte os catálogos abaixo e preencha seu pedido:</p>
-
+    <h2>🛍️ Consultar Catálogos e Fazer Pedido</h2>
+    
+    <p style="text-align: center; font-weight: bold;">1. Escolha uma marca para ver o catálogo:</p>
     <div class="catalogos">
-        <a href="https://www.boticario.com.br/catalogo-digital/" target="_blank" class="btn-cat">O Boticário</a>
-        <a href="https://www.natura.com.br/c/revista-digital" target="_blank" class="btn-cat">Natura</a>
-        <a href="https://www.avon.com.br/folheto-digital" target="_blank" class="btn-cat">Avon</a>
-        <a href="https://catalogo.eudora.com.br/" target="_blank" class="btn-cat">Eudora</a>
+        <div class="btn-cat" onclick="abrirPDF('https://www.boticario.com.br/catalogo-digital/')">O Boticário</div>
+        <div class="btn-cat" onclick="abrirPDF('https://www.natura.com.br/c/revista-digital')">Natura</div>
+        <div class="btn-cat" onclick="abrirPDF('https://www.avon.com.br/folheto-digital')">Avon</div>
+        <div class="btn-cat" onclick="abrirPDF('https://catalogo.eudora.com.br/')">Eudora</div>
     </div>
 
+    <iframe id="visualizador-pdf" src=""></iframe>
+
+    <p style="text-align: center; font-weight: bold;">2. Preencha os dados do pedido:</p>
     <form id="formPedido">
-        <label>Seu Nome:</label>
+        <label>Seu Nome Completo:</label>
         <input type="text" id="nome" required>
 
         <label>Endereço de Entrega:</label>
         <input type="text" id="endereco" required>
 
-        <label>WhatsApp:</label>
+        <label>Seu WhatsApp:</label>
         <input type="tel" id="whatsapp" placeholder="(00) 00000-0000" required>
 
         <div class="brand-section">
-            <label>Produtos Desejados (Nome/Código):</label>
-            <textarea id="produtos" rows="4" placeholder="Ex: Batom Eudora Soul, Perfume Malbec..." required></textarea>
+            <label>Produtos Desejados (Nome e Código):</label>
+            <textarea id="produtos" rows="4" placeholder="Ex: 1x Perfume Lily (Cód 123)&#10;2x Batom Matte (Cód 456)" required></textarea>
         </div>
 
-        <label>Data da Compra:</label>
-        <input type="date" id="dataCompra" required>
+        <div class="grid-campos">
+            <div>
+                <label>Data da Compra:</label>
+                <input type="date" id="dataCompra" required>
+            </div>
+            <div>
+                <label>Data da Entrega:</label>
+                <input type="date" id="dataEntrega">
+            </div>
+        </div>
 
-        <label>Data Prevista para Entrega:</label>
-        <input type="date" id="dataEntrega">
-
-        <label>Valor Total (R$):</label>
-        <input type="number" id="valorTotal" step="0.01" required>
-
-        <label>Valor da 1ª Parcela / Entrada (R$):</label>
-        <input type="number" id="primeiraParcela" step="0.01">
+        <div class="grid-campos">
+            <div>
+                <label>Valor Total (R$):</label>
+                <input type="number" id="valorTotal" step="0.01" required>
+            </div>
+            <div>
+                <label>1ª Parcela / Entrada (R$):</label>
+                <input type="number" id="primeiraParcela" step="0.01">
+            </div>
+        </div>
 
         <label>Valor Restante (R$):</label>
-        <input type="number" id="valorRestante" step="0.01" readonly>
+        <input type="number" id="valorRestante" step="0.01" readonly style="background: #eee; font-weight: bold; color: #c2185b;">
 
-        <button type="button" onclick="enviarWhatsApp()">🚀 Enviar Pedido via WhatsApp</button>
+        <button type="button" id="enviar" onclick="enviarWhatsApp()">🚀 Enviar Pedido via WhatsApp</button>
     </form>
 </div>
 
 <script>
-    // Cálculo automático do valor restante
+    // Função para abrir o PDF no iframe
+    function abrirPDF(url) {
+        const frame = document.getElementById('visualizador-pdf');
+        frame.src = url;
+        frame.style.display = 'block';
+        // Rola suavemente até o catálogo
+        frame.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Cálculo automático
     const totalInput = document.getElementById('valorTotal');
     const entradaInput = document.getElementById('primeiraParcela');
     const restanteInput = document.getElementById('valorRestante');
 
-    function calcularRestante() {
+    function calcular() {
         const total = parseFloat(totalInput.value) || 0;
         const entrada = parseFloat(entradaInput.value) || 0;
         restanteInput.value = (total - entrada).toFixed(2);
     }
 
-    totalInput.addEventListener('input', calcularRestante);
-    entradaInput.addEventListener('input', calcularRestante);
+    totalInput.addEventListener('input', calcular);
+    entradaInput.addEventListener('input', calcular);
 
     function enviarWhatsApp() {
-        const seuNumero = "5583988414799"; // COLOQUE SEU NÚMERO AQUI (DDI + DDD + Numero)
+        const seuNumero = "5583988414799"; 
         
         const nome = document.getElementById('nome').value;
         const endereco = document.getElementById('endereco').value;
@@ -93,17 +124,22 @@ HTML
         const total = document.getElementById('valorTotal').value;
         const entrada = document.getElementById('primeiraParcela').value;
         const restante = document.getElementById('valorRestante').value;
-        
+
+        if(!nome || !produtos || !total) {
+            alert("Por favor, preencha os campos principais antes de enviar!");
+            return;
+        }
+
         const mensagem = `*NOVO PEDIDO DE COSMÉTICOS*%0A%0A` +
-            `*Cliente:* ${nome}%0A` +
-            `*Endereço:* ${endereco}%0A` +
-            `*WhatsApp:* ${zap}%0A%0A` +
-            `*Produtos:*%0A${produtos}%0A%0A` +
-            `*Data da Compra:* ${dataC}%0A` +
-            `*Data da Entrega:* ${dataE}%0A` +
-            `*Valor Total:* R$ ${total}%0A` +
-            `*Entrada:* R$ ${entrada}%0A` +
-            `*Valor Restante:* R$ ${restante}`;
+            `👤 *Cliente:* ${nome}%0A` +
+            `📍 *Endereço:* ${endereco}%0A` +
+            `📱 *WhatsApp:* ${zap}%0A%0A` +
+            `🛍️ *PRODUTOS:*%0A${produtos}%0A%0A` +
+            `📅 *Data da Compra:* ${dataC}%0A` +
+            `🚚 *Data da Entrega:* ${dataE}%0A%0A` +
+            `💰 *Valor Total:* R$ ${total}%0A` +
+            `💵 *Entrada:* R$ ${entrada}%0A` +
+            `📉 *Valor Restante:* R$ ${restante}`;
 
         const url = `https://api.whatsapp.com/send?phone=${seuNumero}&text=${mensagem}`;
         window.open(url, '_blank');
