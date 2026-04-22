@@ -146,36 +146,38 @@
     }
 
     function enviarWhatsApp() {
-        const seuNumero = "5583988414799"; 
-        const nome = document.getElementById('nome').value;
-        const total = document.getElementById('valorTotal').value;
+   function enviarWhatsApp() {
+    const seuNumero = "5583988414799"; 
+    const nome = document.getElementById('nome').value;
+    const total = parseFloat(document.getElementById('valorTotal').value) || 0;
+    const dataC = document.getElementById('dataCompra').value;
 
-        if(!nome || !total) {
-            alert("Preencha o nome e o valor total!");
-            return;
-        }
-
-        // Salva a venda antes de enviar
-        salvarVendaNoRelatorio(total);
-
-        // Gera a mensagem (mesma lógica anterior)
-        const produtos = document.getElementById('produtos').value;
-        const endereco = document.getElementById('endereco').value;
-        const zap = document.getElementById('whatsapp').value;
-        const dataC = document.getElementById('dataCompra').value;
-        const dataE = document.getElementById('dataEntrega').value;
-        const entrada = document.getElementById('primeiraParcela').value;
-        const restante = document.getElementById('valorRestante').value;
-
-        const mensagem = `*NOVO PEDIDO*%0A*Cliente:* ${nome}%0A*Total:* R$ ${total}%0A*Restante:* R$ ${restante}`;
-        const url = `https://api.whatsapp.com/send?phone=${seuNumero}&text=${mensagem}`;
-        
-        window.open(url, '_blank');
+    if(!nome || !total || !dataC) {
+        alert("Preencha Nome, Data e Valor Total!");
+        return;
     }
 
-    // Carrega o relatório assim que a página abre
-    atualizarRelatorioVisual();
-</script>
+    // --- SALVAR PARA O SEU RELATÓRIO ---
+    let vendas = JSON.parse(localStorage.getItem('minhas_vendas')) || [];
+    vendas.push({
+        cliente: nome,
+        valor: total,
+        data: dataC // Salva a data da compra para o relatório mensal
+    });
+    localStorage.setItem('minhas_vendas', JSON.stringify(vendas));
+    // ----------------------------------
+
+    // Lógica de envio do WhatsApp (mantenha o restante como está)
+    const endereco = document.getElementById('endereco').value;
+    const produtos = document.getElementById('produtos').value;
+    const zap = document.getElementById('whatsapp').value;
+    const dataE = document.getElementById('dataEntrega').value;
+    const entrada = document.getElementById('primeiraParcela').value;
+    const restante = document.getElementById('valorRestante').value;
+
+    const mensagem = `*NOVO PEDIDO*%0A*Cliente:* ${nome}%0A*Valor:* R$ ${total.toFixed(2)}`;
+    window.open(`https://api.whatsapp.com/send?phone=${seuNumero}&text=${mensagem}`, '_blank');
+}
 
 </body>
 </html>
